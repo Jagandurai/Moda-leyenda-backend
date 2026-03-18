@@ -6,11 +6,11 @@ const sendEmail = async ({ to, subject, text, html, orderData }) => {
     if (orderData) {
       const { _id, createdAt, user, address, items, amount } = orderData;
 
-      // ✅ Format date in IST using Luxon
-      const formattedDate = DateTime.fromISO(createdAt)
-        .setZone("Asia/Kolkata") // always IST
+      // ✅ Convert UTC -> IST using Luxon
+      const formattedDate = DateTime.fromISO(createdAt, { zone: "utc" }) // read as UTC
+        .setZone("Asia/Kolkata") // convert to IST
         .toFormat("EEEE, dd LLL yyyy, hh:mm:ss a 'IST'"); 
-        // Example: Thursday, 19 Mar 2026, 08:45:12 AM IST
+        // Example: Thursday, 19 Mar 2026, 12:39:12 PM IST
 
       // ✅ Build table rows for items
       const itemsRows = items
