@@ -1,19 +1,16 @@
+import { DateTime } from "luxon";
+
 const sendEmail = async ({ to, subject, text, html, orderData }) => {
   try {
     // ✅ Build Professional HTML if orderData exists
     if (orderData) {
       const { _id, createdAt, user, address, items, amount } = orderData;
 
-      // ✅ Format date in IST
-      const formattedDate = new Date(createdAt).toLocaleString("en-IN", {
-        timeZone: "Asia/Kolkata",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
+      // ✅ Format date in IST using Luxon
+      const formattedDate = DateTime.fromISO(createdAt)
+        .setZone("Asia/Kolkata") // always IST
+        .toFormat("EEEE, dd LLL yyyy, hh:mm:ss a 'IST'"); 
+        // Example: Thursday, 19 Mar 2026, 08:45:12 AM IST
 
       // ✅ Build table rows for items
       const itemsRows = items
