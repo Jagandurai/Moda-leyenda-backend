@@ -1,21 +1,28 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import express from "express";
+import { upload } from "./middleware/multer.middleware.js";
+import { uploadToCloudinary } from "./cloudinary.js";
 
-// Ensure the 'uploads' folder exists
-const uploadDir = "uploads";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
+const router = express.Router();
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir); // Store files in uploads folder
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // unique filename
-  },
+router.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const result = await uploadToCloudinary(req.file.buffer);
+
+    res.status(200).json({
+      message: "Upload successful",
+      url: result.secure_url,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Upload failed",
+      error: error.message,
+    });
+  }
 });
 
-export const upload = multer({ storage });
+export default router;
