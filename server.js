@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import uploadRouter from "./routes/upload.route.js";
 
 import connectDB from "./config/mongodb.js";
 import "./config/cloudinary.js";
@@ -66,6 +67,7 @@ app.use("/api/favourites", favouritesRouter);
 app.use("/api/addresses", addressRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/cleanup", cleanupRouter);
+app.use("/api", uploadRouter);
 app.use("/api/contact", contactRoutes);
 
 // Root endpoint
